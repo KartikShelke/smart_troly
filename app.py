@@ -43,5 +43,5 @@ if st.button("Checkout"):
         st.warning("Your cart is empty!")
     else:
         # Show QR code or image for payment
-        st.image('your_qr_code_image.png', caption="Scan to Pay", width=200)  # Adjust width as needed
+        st.image('image.jpg', caption="Scan to Pay", width=200)  # Adjust width as needed
         st.success("Proceed to Payment!")
