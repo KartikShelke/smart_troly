@@ -16,7 +16,7 @@ products = {
 st.title("Smart Trolley - Dummy Interface")
 
 # Input for barcode
-barcode = st.text_input("Enter Product Barcode (e.g., 1234567890123):")
+barcode = st.text_input("Enter Product Barcode (e.g., 1 or 2 or 3........):")
 
 # Button to add product to cart
 if st.button("Add Product to Cart"):
@@ -43,5 +43,5 @@ if st.button("Checkout"):
         st.warning("Your cart is empty!")
     else:
         # Show QR code or image for payment
-        st.image('image.jpg', caption="Scan to Pay", use_column_width=200)
+        st.image('image.jpg', caption="Scan to Pay", use_column_width=100)
         st.success("Proceed to Payment!")
