@@ -1,5 +1,7 @@
-Flask
-Streamlit
+streamlit
+opencv-python-headless
 pyzbar
-opencv-python
 requests
+Flask
+flask-sqlalchemy
+sqlite3
