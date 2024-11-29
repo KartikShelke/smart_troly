@@ -1,75 +1,39 @@
 import streamlit as st
-import cv2
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 from pyzbar.pyzbar import decode
-import requests
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+import cv2
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///products.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+class QRCodeScanner(VideoTransformerBase):
+    def __init__(self):
+        self.result = None
 
-# Database Model
-class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    price = db.Column(db.Float, nullable=False)
-    barcode = db.Column(db.String(100), unique=True, nullable=False)
+    def transform(self, frame):
+        image = frame.to_ndarray(format="bgr24")
+        for barcode in decode(image):
+            self.result = barcode.data.decode("utf-8")
+            # Draw a rectangle around the QR code
+            rect = barcode.rect
+            cv2.rectangle(image, (rect.left, rect.top), 
+                          (rect.left + rect.width, rect.top + rect.height), 
+                          (255, 0, 0), 2)
+            break  # Stop after detecting one QR code
+        return image
 
-# Initialize Database
-def init_db():
-    with app.app_context():
-        db.create_all()
-
-# Default Route
-@app.route('/')
-def index():
-    return "Welcome to the Smart Cart API! Use the /get-product endpoint to fetch product details."
-
-# API to get product details by barcode
-@app.route('/get-product', methods=['POST'])
-def get_product():
-    data = request.json
-    barcode = data.get('barcode')
-    product = Product.query.filter_by(barcode=barcode).first()
-    if product:
-        return jsonify({
-            'name': product.name,
-            'quantity': product.quantity,
-            'price': product.price
-        }), 200
-    return jsonify({'error': 'Product not found'}), 404
-
-# Streamlit App
 def scan_product():
-    # This function will be a placeholder as Streamlit doesn't support direct webcam access
-    return st.text_input("Enter barcode manually for testing")
-
-def fetch_product(barcode):
-    response = requests.post("http://127.0.0.1:5000/get-product", json={"barcode": barcode})
-    if response.status_code == 200:
-        return response.json()
-    else:
-        st.error("Product not found!")
-        return None
-
-def display_cart(cart):
-    total = 0
-    for item in cart:
-        st.write(f"{item['name']} - {item['quantity']} x {item['price']} = {item['quantity'] * item['price']}")
-        total += item['quantity'] * item['price']
-    st.write(f"Total: {total}")
-    return total
+    scanner = webrtc_streamer(key="qr-scanner", 
+                              video_transformer_factory=QRCodeScanner)
+    if scanner.video_transformer and scanner.video_transformer.result:
+        return scanner.video_transformer.result
+    return None
 
 def main():
-    st.title("Smart Cart")
+    st.title("Smart Shopping Cart")
     cart = []
 
-    if st.button("Scan Product"):
+    if st.button("Start Scanning"):
         barcode = scan_product()
         if barcode:
+            st.success(f"Scanned Barcode: {barcode}")
             product = fetch_product(barcode)
             if product:
                 cart.append(product)
@@ -84,5 +48,4 @@ def main():
         st.success("Payment Successful! Thank you for shopping.")
 
 if __name__ == "__main__":
-    init_db()  # Initialize the database before running the app
     main()
