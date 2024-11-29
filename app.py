@@ -8,7 +8,7 @@ st.markdown("""
             position: top;
             top: 100px;
             right: 100px;
-            width: 100px; /* You can adjust the size of the logo */
+            width: 200px; /* You can adjust the size of the logo */
             height: auto;
         }
     </style>
