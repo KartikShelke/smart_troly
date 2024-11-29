@@ -1,7 +1,19 @@
 import streamlit as st
 from PIL import Image
-# Removed the deprecated `caching` import
-# from streamlit import caching
+
+# Set the logo at the upper right corner using HTML and CSS
+st.markdown("""
+    <style>
+        .logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 100px; /* You can adjust the size of the logo */
+            height: auto;
+        }
+    </style>
+    <img class="logo" src="https://logowik.com/content/uploads/images/dmart-avenue-supermarts4302.jpg" alt="Logo">
+""", unsafe_allow_html=True)
 
 # Initialize session state for cart if it doesn't exist
 if 'cart' not in st.session_state:
@@ -38,7 +50,7 @@ st.write("""
 """, unsafe_allow_html=True)
 
 # Input for barcode with placeholder
-barcode = st.text_input("Scan or Enter Product Barcode (e.g., e.g. 1 or 2 or 3.....)", placeholder="Add Product No. ")
+barcode = st.text_input("Scan or Enter Product Barcode (e.g., 1 or 2 or 3......)", placeholder="Add your product No. ")
 
 # Button to add product to cart with animation
 col1, col2 = st.columns([3, 1])
