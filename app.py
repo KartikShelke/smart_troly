@@ -1,11 +1,12 @@
 import streamlit as st
+from PIL import Image
 
 # Dummy product data
 products_db = {
-    "1": {"name": "Milk", "quantity": 50, "price": 50.0},
-    "2": {"name": "Bread", "quantity": 30, "price": 30.0},
-    "3": {"name": "Eggs", "quantity": 100, "price": 5.0},
-    "4": {"name": "Juice", "quantity": 20, "price": 40.0},
+    "1234567890123": {"name": "Milk", "quantity": 50, "price": 50.0},
+    "9876543210987": {"name": "Bread", "quantity": 30, "price": 30.0},
+    "1122334455667": {"name": "Eggs", "quantity": 100, "price": 5.0},
+    "2233445566778": {"name": "Juice", "quantity": 20, "price": 40.0},
 }
 
 # Cart to store selected products
@@ -30,8 +31,13 @@ def display_cart():
     for item in cart:
         st.write(f"{item['name']} - {item['quantity']} x {item['price']} = {item['quantity'] * item['price']}")
         total += item['quantity'] * item['price']
-    st.write(f"Total: {total}")
     return total
+
+# Function to show the payment QR code
+def show_payment_qr():
+    qr_code = "path_to_qr_image.png"  # Replace with your QR code image path
+    img = Image.open(qr_code)
+    st.image(img, caption="Scan to Pay", use_column_width=True)
 
 # Main function to display the interface
 def main():
@@ -52,12 +58,13 @@ def main():
         total = display_cart()
         st.write(f"Total Cost: {total}")
 
-    # Checkout
+    # Checkout and Payment
     if st.button("Checkout"):
         total = display_cart()
         if total > 0:
             st.write("Proceeding to payment...")
             st.success("Payment Successful! Thank you for shopping.")
+            show_payment_qr()  # Show QR code for payment
         else:
             st.warning("Your cart is empty. Add products before checking out.")
 
