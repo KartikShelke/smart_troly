@@ -4,7 +4,5 @@ pyzbar==0.1.9
 requests==2.32.3
 Flask==3.1.0
 flask-sqlalchemy==3.1.1
-streamlit-webrtc
-streamlit_animated
-Pillow==9.5.0
-
+streamlit-webrtc==0.47.9
+streamlit-lottie==0.0.7  # Alternative animation package
