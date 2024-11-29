@@ -31,23 +31,32 @@ st.write("""
     width: 120px;
     height: 120px;
     animation: spin 2s linear infinite;
+    display: none;
 }
 </style>
-<div class="loader" style="display: none;"></div>
 """, unsafe_allow_html=True)
 
 # Input for barcode with placeholder
 barcode = st.text_input("Scan or Enter Product Barcode (e.g., 1234567890123)", placeholder="e.g. 1234567890123")
 
+# Create a loading spinner element
+spinner_placeholder = st.empty()
+
 # Button to add product to cart with animation
 col1, col2 = st.columns([3, 1])
 with col1:
     if st.button("Add Product to Cart"):
+        # Show the loader while processing
+        spinner_placeholder.markdown('<div class="loader"></div>', unsafe_allow_html=True)
+        
         if barcode in products:
             product = products[barcode]
             st.session_state.cart.append(product)
             st.session_state.total_cost += product["price"]
             st.success(f"Added {product['name']} to the cart!")
+        
+        # Hide loader after processing
+        spinner_placeholder.empty()
 
 # View Cart with animation
 with col2:
@@ -67,6 +76,10 @@ if st.button("Checkout"):
         st.warning("Your cart is empty!")
     else:
         # Show QR code or image for payment
-        image = Image.open('image.jpg')
-        st.image(image, caption="Scan to Pay", width=200)  # Adjust width as needed
+        try:
+            image = Image.open('image.jpg')  # Make sure to put the correct image file
+            st.image(image, caption="Scan to Pay", width=200)  # Adjust width as needed
+        except Exception as e:
+            st.error(f"Error loading image: {e}")
+        
         st.success("Proceed to Payment!")
