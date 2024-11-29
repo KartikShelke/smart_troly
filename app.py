@@ -38,7 +38,7 @@ st.write("""
 """, unsafe_allow_html=True)
 
 # Input for barcode with placeholder
-barcode = st.text_input("Scan or Enter Product Barcode (e.g., 1234567890123)", placeholder="e.g. 1 or 2 or 3.....")
+barcode = st.text_input("Scan or Enter Product Barcode (e.g., e.g. 1 or 2 or 3.....)", placeholder="Add Product No. ")
 
 # Button to add product to cart with animation
 col1, col2 = st.columns([3, 1])
