@@ -1,0 +1,5 @@
+Flask
+Streamlit
+pyzbar
+opencv-python
+requests
