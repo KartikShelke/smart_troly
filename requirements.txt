@@ -1,7 +1,6 @@
-streamlit
-opencv-python-headless
-pyzbar
-requests
-Flask
-flask-sqlalchemy
-sqlite3
+streamlit==1.40.2
+opencv-python-headless==4.10.0.84
+pyzbar==0.1.9
+requests==2.32.3
+Flask==3.1.0
+flask-sqlalchemy==3.1.1
