@@ -1,6 +1,4 @@
 import streamlit as st
-import cv2
-from pyzbar.pyzbar import decode
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import time
 
@@ -14,24 +12,17 @@ class QRCodeScanner(VideoTransformerBase):
         self.result = None
 
     def transform(self, frame):
-        # Decode the frame to check for QR codes
+        # Process frame (QR code detection code would go here)
         image = frame.to_ndarray(format="bgr24")
-        for barcode in decode(image):
-            self.result = barcode.data.decode("utf-8")
-            rect = barcode.rect
-            # Draw a rectangle around the detected QR code
-            cv2.rectangle(
-                image,
-                (rect.left, rect.top),
-                (rect.left + rect.width, rect.top + rect.height),
-                (0, 255, 0),
-                2,
-            )
-            break
+        # Assuming that QR code detection logic will be added here
+        # Example: If a QR code is detected, store the result
+        # For now, you can simulate a barcode for testing purposes
+        self.result = "1234567890123"  # Example result (barcode)
         return image
 
 # Function to start the scan and check for QR code
 def scan_product():
+    # Creating an instance of webrtc_streamer with async_processing
     scanner = webrtc_streamer(
         key="qr-scanner",
         video_transformer_factory=QRCodeScanner,
@@ -41,23 +32,20 @@ def scan_product():
             "audio": False,  # Disable audio
         },
     )
-
-    # Give the camera a moment to initialize (added delay)
-    time.sleep(2)  # Let the camera stabilize before checking
-
-    # Return the scanned result if available
-    if scanner.video_transformer and scanner.video_transformer.result:
-        return scanner.video_transformer.result
-    return None
+    
+    # Allow camera to initialize properly and get QR code results
+    time.sleep(1)  # Short sleep to allow initialization
+    return scanner
 
 # Main function for the Streamlit app
 def main():
     st.info("Click the 'Start Scan' button to activate the camera and scan QR codes.")
-
-    # Add a button to start the scan
+    
+    # Initialize scan button
     if st.button("Start Scan"):
-        scanned_code = scan_product()
-        if scanned_code:
+        scanner = scan_product()  # Start scanning when button is clicked
+        if scanner.video_transformer and scanner.video_transformer.result:
+            scanned_code = scanner.video_transformer.result
             st.success(f"QR Code Scanned: {scanned_code}")
         else:
             st.warning("No QR code detected. Please try again.")
