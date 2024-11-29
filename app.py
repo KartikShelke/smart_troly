@@ -3,10 +3,10 @@ from PIL import Image
 
 # Dummy product data
 products_db = {
-    "1234567890123": {"name": "Milk", "quantity": 50, "price": 50.0},
-    "9876543210987": {"name": "Bread", "quantity": 30, "price": 30.0},
-    "1122334455667": {"name": "Eggs", "quantity": 100, "price": 5.0},
-    "2233445566778": {"name": "Juice", "quantity": 20, "price": 40.0},
+    "1": {"name": "Milk", "quantity": 50, "price": 50.0},
+    "2": {"name": "Bread", "quantity": 30, "price": 30.0},
+    "3": {"name": "Eggs", "quantity": 100, "price": 5.0},
+    "4": {"name": "Juice", "quantity": 20, "price": 40.0},
 }
 
 # Cart to store selected products
