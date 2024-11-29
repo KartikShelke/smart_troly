@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
-from streamlit import caching
+# Removed the deprecated `caching` import
+# from streamlit import caching
 
 # Initialize session state for cart if it doesn't exist
 if 'cart' not in st.session_state:
@@ -31,32 +32,23 @@ st.write("""
     width: 120px;
     height: 120px;
     animation: spin 2s linear infinite;
-    display: none;
 }
 </style>
+<div class="loader" style="display: none;"></div>
 """, unsafe_allow_html=True)
 
 # Input for barcode with placeholder
 barcode = st.text_input("Scan or Enter Product Barcode (e.g., 1234567890123)", placeholder="e.g. 1234567890123")
 
-# Create a loading spinner element
-spinner_placeholder = st.empty()
-
 # Button to add product to cart with animation
 col1, col2 = st.columns([3, 1])
 with col1:
     if st.button("Add Product to Cart"):
-        # Show the loader while processing
-        spinner_placeholder.markdown('<div class="loader"></div>', unsafe_allow_html=True)
-        
         if barcode in products:
             product = products[barcode]
             st.session_state.cart.append(product)
             st.session_state.total_cost += product["price"]
             st.success(f"Added {product['name']} to the cart!")
-        
-        # Hide loader after processing
-        spinner_placeholder.empty()
 
 # View Cart with animation
 with col2:
@@ -76,10 +68,18 @@ if st.button("Checkout"):
         st.warning("Your cart is empty!")
     else:
         # Show QR code or image for payment
-        try:
-            image = Image.open('image.jpg')  # Make sure to put the correct image file
-            st.image(image, caption="Scan to Pay", width=200)  # Adjust width as needed
-        except Exception as e:
-            st.error(f"Error loading image: {e}")
-        
+        image = Image.open('image.jpg')
+        st.image(image, caption="Scan to Pay", width=200)  # Adjust width as needed
         st.success("Proceed to Payment!")
+
+# Example caching for expensive computation (optional)
+@st.cache_data
+def expensive_computation():
+    # Imagine some time-consuming task here
+    return "Computation result"
+
+# Example function to fetch resources that can be cached
+@st.cache_resource
+def fetch_resource():
+    # Fetch some external resource, for example, a database connection
+    return "Fetched resource"
