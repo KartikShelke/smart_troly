@@ -6,7 +6,7 @@ st.markdown("""
     <style>
         .logo {
             position: absolute;
-            top: 10px;
+            top: 50px;
             right: 10px;
             width: 100px; /* You can adjust the size of the logo */
             height: auto;
