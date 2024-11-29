@@ -5,7 +5,7 @@ from PIL import Image
 st.markdown("""
     <style>
         .logo {
-            position: absolute;
+            position: top;
             top: 100px;
             right: 100px;
             width: 500px; /* You can adjust the size of the logo */
