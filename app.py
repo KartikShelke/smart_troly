@@ -1,54 +1,66 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
-import time
 
-# Streamlit title and layout
-st.title("Smart Shopping Trolley - QR Code Scanner")
-st.write("Use your camera to scan the QR codes of products.")
+# Dummy product data
+products_db = {
+    "1234567890123": {"name": "Milk", "quantity": 50, "price": 50.0},
+    "9876543210987": {"name": "Bread", "quantity": 30, "price": 30.0},
+    "1122334455667": {"name": "Eggs", "quantity": 100, "price": 5.0},
+    "2233445566778": {"name": "Juice", "quantity": 20, "price": 40.0},
+}
 
-# QR Code Scanner class for processing video
-class QRCodeScanner(VideoTransformerBase):
-    def __init__(self):
-        self.result = None
+# Cart to store selected products
+cart = []
 
-    def transform(self, frame):
-        # Process frame (QR code detection code would go here)
-        image = frame.to_ndarray(format="bgr24")
-        # Assuming that QR code detection logic will be added here
-        # Example: If a QR code is detected, store the result
-        # For now, you can simulate a barcode for testing purposes
-        self.result = "1234567890123"  # Example result (barcode)
-        return image
+# Function to add product to the cart
+def add_to_cart(barcode):
+    if barcode in products_db:
+        product = products_db[barcode]
+        cart.append(product)
+        st.success(f"Added {product['name']} to the cart!")
+    else:
+        st.error("Product not found!")
 
-# Function to start the scan and check for QR code
-def scan_product():
-    # Creating an instance of webrtc_streamer with async_processing
-    scanner = webrtc_streamer(
-        key="qr-scanner",
-        video_transformer_factory=QRCodeScanner,
-        async_processing=True,
-        media_stream_constraints={
-            "video": True,  # Enable video
-            "audio": False,  # Disable audio
-        },
-    )
-    
-    # Allow camera to initialize properly and get QR code results
-    time.sleep(1)  # Short sleep to allow initialization
-    return scanner
+# Function to display cart and total cost
+def display_cart():
+    if not cart:
+        st.info("Your cart is empty!")
+        return 0
+    total = 0
+    st.write("Your Cart:")
+    for item in cart:
+        st.write(f"{item['name']} - {item['quantity']} x {item['price']} = {item['quantity'] * item['price']}")
+        total += item['quantity'] * item['price']
+    st.write(f"Total: {total}")
+    return total
 
-# Main function for the Streamlit app
+# Main function to display the interface
 def main():
-    st.info("Click the 'Start Scan' button to activate the camera and scan QR codes.")
-    
-    # Initialize scan button
-    if st.button("Start Scan"):
-        scanner = scan_product()  # Start scanning when button is clicked
-        if scanner.video_transformer and scanner.video_transformer.result:
-            scanned_code = scanner.video_transformer.result
-            st.success(f"QR Code Scanned: {scanned_code}")
-        else:
-            st.warning("No QR code detected. Please try again.")
+    st.title("Smart Trolley - Dummy Interface")
+    st.write("Welcome to the Smart Trolley. Scan products and manage your cart.")
 
+    # Simulate product scanning by manually entering barcode
+    barcode = st.text_input("Enter Product Barcode (e.g., 1234567890123):")
+
+    if st.button("Add Product to Cart"):
+        if barcode:
+            add_to_cart(barcode)
+        else:
+            st.error("Please enter a valid barcode!")
+
+    # View Cart
+    if st.button("View Cart"):
+        total = display_cart()
+        st.write(f"Total Cost: {total}")
+
+    # Checkout
+    if st.button("Checkout"):
+        total = display_cart()
+        if total > 0:
+            st.write("Proceeding to payment...")
+            st.success("Payment Successful! Thank you for shopping.")
+        else:
+            st.warning("Your cart is empty. Add products before checking out.")
+
+# Run the app
 if __name__ == "__main__":
     main()
