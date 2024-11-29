@@ -1,73 +1,47 @@
 import streamlit as st
-from PIL import Image
 
-# Dummy product data
-products_db = {
-    "1": {"name": "Milk", "quantity": 50, "price": 50.0},
-    "2": {"name": "Bread", "quantity": 30, "price": 30.0},
-    "3": {"name": "Eggs", "quantity": 100, "price": 5.0},
-    "4": {"name": "Juice", "quantity": 20, "price": 40.0},
+# Initialize session state for cart if it doesn't exist
+if 'cart' not in st.session_state:
+    st.session_state.cart = []
+    st.session_state.total_cost = 0
+
+# Sample product details (barcode, name, price)
+products = {
+    "1": {"name": "Milk", "price": 25},
+    "2": {"name": "Bread", "price": 15},
+    "3": {"name": "Butter", "price": 30},
 }
 
-# Cart to store selected products
-cart = []
+# Title of the app
+st.title("Smart Trolley - Dummy Interface")
 
-# Function to add product to the cart
-def add_to_cart(barcode):
-    if barcode in products_db:
-        product = products_db[barcode]
-        cart.append(product)
+# Input for barcode
+barcode = st.text_input("Enter Product Barcode (e.g., 1234567890123):")
+
+# Button to add product to cart
+if st.button("Add Product to Cart"):
+    if barcode in products:
+        product = products[barcode]
+        st.session_state.cart.append(product)
+        st.session_state.total_cost += product["price"]
         st.success(f"Added {product['name']} to the cart!")
-    else:
-        st.error("Product not found!")
 
-# Function to display cart and total cost
-def display_cart():
-    if not cart:
+# View Cart
+if st.button("View Cart"):
+    if len(st.session_state.cart) == 0:
         st.info("Your cart is empty!")
-        return 0
-    total = 0
-    st.write("Your Cart:")
-    for item in cart:
-        st.write(f"{item['name']} - {item['quantity']} x {item['price']} = {item['quantity'] * item['price']}")
-        total += item['quantity'] * item['price']
-    return total
+    else:
+        cart_details = ""
+        for product in st.session_state.cart:
+            cart_details += f"{product['name']} - ${product['price']} \n"
+        st.text(cart_details)
+        st.write(f"Total Cost: ${st.session_state.total_cost}")
 
-# Function to show the payment QR code
-def show_payment_qr():
-    qr_code = "path_to_qr_image.png"  # Replace with your QR code image path
-    img = Image.open(qr_code)
-    st.image(img, caption="Scan to Pay", use_column_width=True)
-
-# Main function to display the interface
-def main():
-    st.title("Smart Trolley - Dummy Interface")
-    st.write("Welcome to the Smart Trolley. Scan products and manage your cart.")
-
-    # Simulate product scanning by manually entering barcode
-    barcode = st.text_input("Enter Product Barcode (e.g., 1234567890123):")
-
-    if st.button("Add Product to Cart"):
-        if barcode:
-            add_to_cart(barcode)
-        else:
-            st.error("Please enter a valid barcode!")
-
-    # View Cart
-    if st.button("View Cart"):
-        total = display_cart()
-        st.write(f"Total Cost: {total}")
-
-    # Checkout and Payment
-    if st.button("Checkout"):
-        total = display_cart()
-        if total > 0:
-            st.write("Proceeding to payment...")
-            st.success("Payment Successful! Thank you for shopping.")
-            show_payment_qr()  # Show QR code for payment
-        else:
-            st.warning("Your cart is empty. Add products before checking out.")
-
-# Run the app
-if __name__ == "__main__":
-    main()
+# Checkout button
+if st.button("Checkout"):
+    if len(st.session_state.cart) == 0:
+        st.warning("Your cart is empty!")
+    else:
+        # Show QR code or image for payment
+        st.image('your_qr_code_image.png', caption="Scan to Pay", use_column_width=True)
+        st.success("Proceed to Payment!")
